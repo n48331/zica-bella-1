@@ -144,7 +144,7 @@ const ProductDetailPage = () => {
             </div>
 
             {/* Color Selection with left icon and flexed colors */}
-            <div className="space-y-3 border-b border-gray-700 pb-4">
+            {/* <div className="space-y-3 border-b border-gray-700 pb-4">
               <div className="flex items-center mb-2">
                 <div className="flex items-center w-16 justify-center">
                   <img src="/shop/icons/pants.png" alt="Pants Icon" className="w-10 h-10" />
@@ -169,7 +169,7 @@ const ProductDetailPage = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Shirt color palette (if needed) */}
             <div className="space-y-3 border-b border-gray-700 pb-4">

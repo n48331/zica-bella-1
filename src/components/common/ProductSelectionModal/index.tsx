@@ -67,7 +67,7 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="bg-white/20 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto shadow-xl border border-white/30 backdrop-blur-lg"
+          className="bg-white/20 rounded-sm max-w-md w-full max-h-[90vh] overflow-y-auto shadow-xl border border-white/30 backdrop-blur-lg"
           style={{
             boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)",
             backdropFilter: "blur(16px) saturate(180%)",
@@ -80,7 +80,7 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
             <h2 className="text-lg font-semibold text-white">Select Options</h2>
             <button 
               onClick={onClose}
-              className="p-2 hover:bg-black rounded-full"
+              className="p-2 hover:bg-black rounded-sm"
             >
               <IoClose className="text-xl text-white" />
             </button>
@@ -94,11 +94,11 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                 <img 
                   src={product.images[0]} 
                   alt={product.name}
-                  className="w-full h-full object-cover rounded"
+                  className="w-full h-full object-cover rounded-sm"
                 />
               </div>
               <div>
-                <h3 className="font-medium text-white">{product.name}</h3>
+                <h3 className="font-medium text-lg text-white">{product.name}</h3>
                 <p className="text-lg font-semibold text-white">₹{product.price.toLocaleString()}</p>
               </div>
             </div>
@@ -138,7 +138,7 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                       key={size.name}
                       onClick={() => size.available && setSelectedSize(size.name)}
                       disabled={!size.available}
-                      className={`px-4 py-2 border rounded-md text-sm font-medium transition-all duration-200 ${
+                      className={`px-4 py-2 border rounded-sm text-sm font-medium transition-all duration-200 ${
                         selectedSize === size.name
                           ? 'border-black bg-black text-white'
                           : 'border-gray-300 text-white hover:border-gray-400'
@@ -152,20 +152,20 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
             )}
 
             {/* Quantity Selection */}
-            <div className="mb-6">
+            <div className="mb-6 hidden">
              {selectedColor && (
               <>   <h4 className="text-sm font-medium text-white mb-3">Quantity</h4>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-8 h-8 border border-gray-300 rounded-md text-white flex items-center justify-center hover:bg-gray-100"
+                  className="w-8 h-8 border border-gray-300 rounded-sm text-white flex items-center justify-center hover:bg-gray-100"
                 >
                   -
                 </button>
                 <span className="text-lg font-medium min-w-[40px] text-center text-white">{quantity}</span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-8 h-8 border border-gray-300 rounded-md text-white flex items-center justify-center hover:bg-gray-100"
+                  className="w-8 h-8 border border-gray-300 rounded-sm text-white flex items-center justify-center hover:bg-gray-100"
                 >
                   +
                 </button>
@@ -178,16 +178,16 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
           {/* Footer */}
           <div className="border-t border-white/30 p-4">
             <div className="flex gap-3">
-              <button
+              {/* <button
                 onClick={onClose}
                 className="flex-1 py-2 border border-gray-300 text-white rounded-md hover:bg-gray-50 transition"
               >
                 Cancel
-              </button>
+              </button> */}
               <button
                 onClick={handleAddToCart}
                 disabled={product.soldOut}
-                className={`flex-1 py-2 rounded-md transition font-medium ${
+                className={`flex-1 py-2 rounded-sm transition font-medium ${
                   product.soldOut
                     ? 'bg-gray-400 text-white cursor-not-allowed'
                     : 'bg-black text-white hover:bg-gray-800'

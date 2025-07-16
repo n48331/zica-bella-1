@@ -1,4 +1,5 @@
 "use client"
+import Logo3D from "@/components/common/Logo3D";
 import { useEffect, useRef } from "react";
 
 const ParallaxSection = () => {
@@ -30,6 +31,10 @@ const ParallaxSection = () => {
             
             {/* Content that scrolls over the fixed background */}
             <div className="relative z-10  flex flex-col items-center justify-center text-white text-center p-60 w-full">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <Logo3D />
+              </div>
+              
                 {/* <div className="max-w-4xl mx-auto">
                     <p className="text-lg mb-6 opacity-90 font-light tracking-wide">
                         DISCOVER OUR COLLECTION

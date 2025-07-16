@@ -1,4 +1,5 @@
 "use client"
+import Logo3D from "@/components/common/Logo3D";
 import Link from "next/link";
 
 const Hero = () => {
@@ -21,9 +22,13 @@ const Hero = () => {
                 Your browser does not support the video tag.
             </video>
             <div className="absolute inset-0 bg-opacity-40"></div>
+           
             <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
                 <p className="text-lg mb-2 opacity-65">zica bella</p>
                 <h3 className="text-4xl font-serif mb-4">Unleash Your Style: Discover the Latest Trends!</h3>
+                <div>
+                    <Logo3D />
+                </div>
                 <Link href="/shop" className="px-6 py-2 bg-white text-black rounded-sm font-bold uppercase hover:bg-gray-200 transition">
                     view product
                 </Link>

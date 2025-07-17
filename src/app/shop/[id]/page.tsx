@@ -172,7 +172,7 @@ const ProductDetailPage = () => {
             </div> */}
 
             {/* Shirt color palette (if needed) */}
-            <div className="space-y-3 border-b border-gray-700 pb-4">
+            <div className="space-y-3 border-b border-gray-700 pb-4 hidden">
               <div className="flex items-center mb-2">
                 <div className="flex items-center w-16 justify-center">
                   <img src="/shop/icons/shirts.png" alt="Shirt Icon" className="w-10 h-10" />
@@ -202,22 +202,29 @@ const ProductDetailPage = () => {
             {/* Size Selection with left icon and flexed sizes */}
             <div className="space-y-3 border-b border-gray-700 pb-4">
               <div className="flex items-center mb-2">
-                <div className="flex items-center w-16 justify-center">
+                {/* <div className="flex items-center w-16 justify-center">
                   <img src="/shop/icons/shirts.png" alt="Shirt Icon" className="w-10 h-10" />
-                </div>
+                </div> */}
                 <div className="flex-1 flex space-x-3">
                   {product.sizes.map((size: any) => (
                     <button
                       key={size.name}
                       onClick={() => size.available && setSelectedSize(size.name)}
                       disabled={!size.available}
+                      // className={`
+                      //   w-12 h-12 rounded-full border-2 text-sm font-medium transition-all duration-200
+                      //   ${selectedSize === size.name
+                      //     ? 'border-0 bg-white text-black handdrawn-wobbly-border'
+                      //     : 'border-gray-600 text-white hover:border-gray-400'
+                      //   }
+                      //   ${!size.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                      // `}
                       className={`
-                        w-12 h-12 rounded-full border-2 text-sm font-medium transition-all duration-200
+                        w-12 h-12 rounded-full  text-sm font-medium transition-all duration-200
                         ${selectedSize === size.name
-                          ? 'border-white bg-white text-black'
-                          : 'border-gray-600 text-white hover:border-gray-400'
+                          ? ' handdrawn-wobbly-border'
+                          : ''
                         }
-                        ${!size.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                       `}
                     >
                       {size.name}

@@ -3,7 +3,7 @@ import { useState, lazy, Suspense, useEffect, useRef } from "react";
 import { useProducts } from "@/context/ProductContext";
 
 // Lazy load components
-const CategoryTabs = lazy(() => import("./CategoryTabs"));
+// const CategoryTabs = lazy(() => import("./CategoryTabs"));
 const ProductCard = lazy(() => import("./ProductCard"));
 const ProductTitle = lazy(() => import("./ProductTitle"));
 const ParallaxSection = lazy(() => import("../ParallaxSection"));
@@ -82,10 +82,12 @@ const ProductsSection = () => {
       <Suspense fallback={<LoadingSkeleton />}>
         <ProductTitle />
       </Suspense>
+    <div className="border-b border-gray-800">
 
-      <Suspense fallback={<LoadingSkeleton />}>
+    </div>
+      {/* <Suspense fallback={<LoadingSkeleton />}>
         <CategoryTabs onCategoryChange={setActiveCategory} />
-      </Suspense>
+      </Suspense> */}
 
       {/* Products Groups with Parallax Dividers */}
       {productGroups.map((group, groupIndex) => (

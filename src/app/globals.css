@@ -50,3 +50,12 @@ body {
   transform-origin: center center;
   z-index: 10;
 }
+
+.handdrawn-wobbly-border {
+  background-image: url("/loop.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  position: relative;
+  border: none !important;
+}

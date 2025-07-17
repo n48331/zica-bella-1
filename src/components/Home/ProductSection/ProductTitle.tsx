@@ -17,8 +17,7 @@ const ProductTitle = () => {
           
           <div className="text-left sm:text-right">
             <p className="text-base sm:text-lg md:text-xl font-medium text-white  tracking-widest font-numbers">
-              SUMMER<br />
-              2024
+              2025
             </p>
           </div>
         </div>

@@ -1,9 +1,13 @@
 import Image from "next/image";
 import { FaInstagram, FaYoutube, FaGoogle } from 'react-icons/fa';
+import Logo3D from "../Logo3D";
 
 const Footer = () => {
     return (
         <footer className="bg-black text-white pt-8 pb-4 px-4">
+            <div>
+                <Logo3D />
+            </div>
             {/* Top Row: Logo/Brand and Social Icons */}
             <div className="flex flex-col md:flex-row items-center justify-between mb-8">
                 <div className="flex items-center space-x-2 mb-4 md:mb-0">
@@ -44,8 +48,9 @@ const Footer = () => {
 
             {/* Bottom Row: Policy Links */}
             <div className="flex flex-col md:flex-row items-center justify-between text-gray-300 text-sm gap-3">
-                <a href="#" className="hover:underline">Privacy Policy</a>
-                <a href="#" className="hover:underline">Terms Of Use</a>
+                <a href="/policy/privacy-policy" className="hover:underline">Privacy Policy</a>
+                <a href="/policy/terms-of-service" className="hover:underline">Terms Of Service</a>
+                <a href="/policy/return-and-refund-policy" className="hover:underline">Return and Refund Policy</a>
                 <a href="#" className="hover:underline">Contact Us</a>
             </div>
         </footer>

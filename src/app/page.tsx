@@ -18,7 +18,7 @@ export default function Home() {
     const unauthorized = searchParams.get('unauthorized');
     if (unauthorized === 'admin') {
       setShowUnauthorizedAlert(true);
-      
+
       // Clear the URL parameter after showing the alert
       const url = new URL(window.location.href);
       url.searchParams.delete('unauthorized');
@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <>
       <Navbar isHome={true} />
-      
+
       {/* Unauthorized Admin Alert */}
       {showUnauthorizedAlert && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md mx-4">
@@ -62,13 +62,14 @@ export default function Home() {
         </div>
       )}
 
-      <div className="font-literata text-2xl ">
+      <div className="font-literata text-2xl">
         <Hero />
-        <ProductsSection />
-        <SlidingProducts />
-        
-        {/* <Featured /> */}
-        <Footer />
+        <div className="bg-black">
+          <ProductsSection />
+          <SlidingProducts />
+          {/* <Featured /> */}
+          <Footer />
+        </div>
       </div>
     </>
   );

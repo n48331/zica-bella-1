@@ -105,7 +105,7 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
 
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
-              <div className="mb-6">
+              <div className="mb-6 hidden">
                 <h4 className="text-sm font-medium text-white mb-3">
                   Color {selectedColor && <span className="text-black-500">({selectedColor})</span>}
                 </h4>

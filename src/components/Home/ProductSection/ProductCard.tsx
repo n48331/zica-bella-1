@@ -171,30 +171,7 @@ const ProductCard = ({
               </div>
             )}
 
-            {/* Add to Cart Button */}
-            <button 
-              onClick={handleAddToCart}
-              disabled={product.soldOut}
-              className={`absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-colors duration-200 z-20 ${
-                product.soldOut 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-white hover:bg-gray-50 hover:scale-110'
-              }`}
-            >
-              <svg
-                className="h-4 w-4 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-            </button>
+         
 
             <style jsx global>{`
               @keyframes zoom {
@@ -236,7 +213,30 @@ const ProductCard = ({
               }
             `}</style>
           </div>
-
+   {/* Add to Cart Button */}
+   <button 
+              onClick={handleAddToCart}
+              disabled={product.soldOut}
+              className={`absolute bottom-[85px] right-3 flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-colors duration-200 z-20 ${
+                product.soldOut 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-white hover:bg-gray-50 hover:scale-110'
+              }`}
+            >
+              <svg
+                className="h-4 w-4 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+            </button>
           {/* Product Info */}
           <div className="mt-4 space-y-1 px-2 text-center">
             <h3 className="text-sm font-medium text-white uppercase tracking-wide">

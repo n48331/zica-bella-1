@@ -30,10 +30,10 @@ function AnimatedLogoModel(props: any) {
         if (child.isMesh && child.material) {
           // Silver color: #C0C0C0, but also ensure the material is physically correct
           child.material.metalness = 1.0;
-          child.material.roughness = 0.05; // Lower roughness for more shine
-          child.material.color.set("#C0C0C0");
-          child.material.envMapIntensity = 2.5; // Boost reflections
-          child.material.specular = new THREE.Color("#ffffff");
+          child.material.roughness = 0.4; // Lower roughness for more shine
+        //   child.material.color.set("#fff");
+          child.material.envMapIntensity = 1; // Boost reflections
+          child.material.specular = new THREE.Color("#C0C0C0");
           child.material.needsUpdate = true;
         }
       });
@@ -91,25 +91,25 @@ export default function Logo3D({
       {shouldRender ? (
         <Canvas camera={camera} {...canvasProps}>
           {/* Add an environment for realistic reflections */}
-          <ambientLight intensity={1.2} color="#ffffff" />
+          <ambientLight intensity={2.0} color="#7c7c7c" />
           <directionalLight
-            position={[5, 5, 5]}
+            position={[10, 10, 10]}
             intensity={2.2}
             color="#ffffff"
           />
           <directionalLight
-            position={[-5, -5, 5]}
+            position={[-10, -10, 10]}
             intensity={1.2}
-            color="#e0e0e0"
+            color="#ffffff"
           />
-          <pointLight position={[0, 2, 2]} intensity={2.5} color="#ffffff" />
+          <pointLight position={[0.32, 0.39, 0.7]} intensity={2.5} color="#ffffff" />
           {/* Add a subtle backlight for rim lighting */}
-          <pointLight position={[0, -3, -3]} intensity={1.2} color="#b0c4de" />
+          {/* <pointLight position={[0, -3, -3]} intensity={1.2} color="#b0c4de" /> */}
           {/* Optionally, add a simple environment cube */}
           <Suspense fallback={null}>
             <AnimatedLogoModel scale={0.25} />
           </Suspense>
-          <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
+          <OrbitControls enablePan={true} enableZoom={false} enableRotate={true} />
         </Canvas>
       ) : (
         <div 

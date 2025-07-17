@@ -9,6 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IoWarning, IoClose, IoShield } from 'react-icons/io5';
 import Image from "next/image";
+import { ParallaxProvider } from 'react-scroll-parallax';
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -28,6 +29,9 @@ export default function Home() {
 
   return (
     <>
+    <ParallaxProvider>
+
+
       <Navbar isHome={true} />
 
       {/* Unauthorized Admin Alert */}
@@ -71,6 +75,7 @@ export default function Home() {
           <Footer />
         </div>
       </div>
+      </ParallaxProvider>
     </>
   );
 }

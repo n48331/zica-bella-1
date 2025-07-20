@@ -72,15 +72,18 @@ const SlidingProducts = () => {
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex gap-0 overflow-x-auto scrollbar-hide pb-4 px-4 touch-pan-x"
+            className="flex gap-0 overflow-x-auto scrollbar-hide pb-4 px-4"
             style={{ 
               scrollbarWidth: 'none', 
               msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch'
+              WebkitOverflowScrolling: 'touch',
+              overscrollBehavior: 'contain',
+              scrollSnapType: 'x mandatory',
+              scrollBehavior: 'smooth'
             }}
           >
             {slidingProducts.map((product, index) => (
-              <div key={product.id} className="flex-shrink-0 w-72">
+              <div key={product.id} className="flex-shrink-0 w-72" style={{ scrollSnapAlign: 'start' }}>
                 <ProductCard 
                   product={product} 
                   isNotLastColumn={index !== slidingProducts.length - 1}
@@ -91,7 +94,6 @@ const SlidingProducts = () => {
         </div>
 
         {/* Scroll Indicators */}
-     
       </div>
     </div>
   );

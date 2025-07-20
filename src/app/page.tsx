@@ -5,6 +5,7 @@ import Featured from "@/components/Home/Featured";
 import Hero from "@/components/Home/Hero";
 import ProductsSection from "@/components/Home/ProductSection";
 import SlidingProducts from "@/components/Home/SlidingProducts";
+import CategoryCards from "@/components/Home/CategoryCards";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IoWarning, IoClose, IoShield } from 'react-icons/io5';
@@ -70,7 +71,12 @@ export default function Home() {
         <Hero />
         <div className="bg-black">
           <ProductsSection />
+          <div className="border-b border-gray-800"></div>
+        <CategoryCards />
+        <div className="border-b border-gray-800"></div>
           <SlidingProducts />
+        <div className="border-b border-gray-800"></div>
+
           {/* <Featured /> */}
           <Footer />
         </div>

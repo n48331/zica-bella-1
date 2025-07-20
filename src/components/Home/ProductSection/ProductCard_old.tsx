@@ -137,13 +137,32 @@ const ProductCard = ({
           ref={containerRef}
         >
           <div className="relative h-80 aspect-[3/4] w-full overflow-hidden bg-gray-900">
-            {/* Always show the first image */}
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="h-full w-full object-cover object-center transition-opacity duration-300"
-              loading="lazy"
-            />
+            {!imagesLoaded ? (
+              <div className="absolute inset-0 overflow-hidden">
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  className="h-full w-full object-cover object-center"
+                  loading="lazy"
+                />
+                {inView && (
+                  <div className="absolute inset-0 bg-transparent animate-intentionalZoom z-10 pointer-events-none" />
+                )}
+              </div>
+            ) : (
+              <Swiper {...swiperConfig}>
+                {product.images.map((img, idx) => (
+                  <SwiperSlide key={`${product.id}-slide-${idx}`}>
+                    <img
+                      src={img}
+                      alt={`${product.name} - Image ${idx + 1}`}
+                      className="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300"
+                      loading="lazy"
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
             {/* Overlay last image on hover if more than one image and images are loaded */}
             {imagesLoaded && product.images.length > 1 && (
               <img

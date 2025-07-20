@@ -113,7 +113,7 @@ const ProductsSection = () => {
           {groupIndex < productGroups.length - 1 && (
             <div className="my-16">
               <Suspense fallback={<div className="h-96 bg-gray-900 animate-pulse" />}>
-                <ParallaxSection />
+                <ParallaxSection groupIndex={groupIndex}/>
               </Suspense>
             </div>
           )}

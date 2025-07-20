@@ -220,7 +220,7 @@ const ProductDetailPage = () => {
                       //   ${!size.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                       // `}
                       className={`
-                        w-12 h-12 rounded-full  text-sm font-medium transition-all duration-200
+                        w-12 h-12 rounded-full   text-sm font-medium transition-all duration-200
                         ${selectedSize === size.name
                           ? ' handdrawn-wobbly-border'
                           : ''

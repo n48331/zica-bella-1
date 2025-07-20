@@ -67,7 +67,7 @@ const ProductCard = ({ product, isNotLastColumn }: ProductCardProps) => {
       pauseOnMouseEnter: true,
     } : false,
     loop: product.images.length > 1,
-    allowTouchMove: false,
+    allowTouchMove: true,
     pagination: product.images.length > 1 ? {
       clickable: true,
       dynamicBullets: false,
@@ -95,18 +95,20 @@ const ProductCard = ({ product, isNotLastColumn }: ProductCardProps) => {
           {/* Product Image */}
           <div className="relative h-80 aspect-[3/4] w-full overflow-hidden bg-gray-900">
             {product.images.length > 1 ? (
-              <Swiper {...swiperConfig}>
-                {product.images.map((img, idx) => (
-                  <SwiperSlide key={`${product.id}-slide-${idx}`}>
-                    <img
-                      src={img}
-                      alt={`${product.name} - Image ${idx + 1}`}
-                      className="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300"
-                      loading="lazy"
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+              <div style={{ touchAction: 'pan-y', pointerEvents: 'auto' }}>
+                <Swiper {...swiperConfig}>
+                  {product.images.map((img, idx) => (
+                    <SwiperSlide key={`${product.id}-slide-${idx}`}>
+                      <img
+                        src={img}
+                        alt={`${product.name} - Image ${idx + 1}`}
+                        className="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300"
+                        loading="lazy"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
             ) : (
               <img
                 src={product.images[0]}

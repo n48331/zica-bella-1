@@ -1,13 +1,22 @@
 "use client"
 import { ParallaxBanner } from 'react-scroll-parallax';
 
-const ParallaxSection = () => {
+const images = [
+    "/home/parralax1.jpeg",
+    "/home/parralax2.jpeg",
+    "/home/parralax3.jpeg",
+
+]
+
+const ParallaxSection = ({ groupIndex }: { groupIndex: number }) => {
     return (
         <ParallaxBanner
             layers={[
                 {
-                    image: "/home/image2.jpeg",
+                    image: images[groupIndex % images.length],
                     speed: -30,
+                    scale: [.5, 2],
+                    opacity: [.5, 1],
                     expanded: false,
                 },
             ]}

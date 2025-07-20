@@ -79,6 +79,7 @@ interface ProductContextType {
   updateCartItemQuantity: (itemId: number, quantity: number) => void;
   clearCart: () => void;
   refreshProducts: () => Promise<void>;
+  clearProductCache: () => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -340,9 +341,18 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     showToast('Cart cleared', 'success');
   }, [showToast]);
 
-  const refreshProducts = useCallback(async () => {
+  // Refresh products function - clears cache and fetches fresh data
+  const refreshProducts = useCallback(async (): Promise<void> => {
+    // Clear the cache to force a fresh fetch
+    productCache = null;
     await fetchProducts(true);
   }, [fetchProducts]);
+
+  // Clear cache function for external use
+  const clearProductCache = useCallback(() => {
+    productCache = null;
+    console.log('ProductContext cache cleared');
+  }, []);
 
   // Memoized computed values
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
@@ -363,6 +373,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     updateCartItemQuantity,
     clearCart,
     refreshProducts,
+    clearProductCache,
   };
 
   return (

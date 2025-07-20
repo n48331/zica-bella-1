@@ -22,6 +22,83 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // For single file upload, return the URL directly
+    if (files.length === 1) {
+      const file = files[0]
+      
+      try {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          return NextResponse.json(
+            { error: `${file.name}: Only image files are allowed` },
+            { status: 400 }
+          )
+        }
+
+        // Validate file size (5MB limit)
+        const maxSize = 5 * 1024 * 1024 // 5MB
+        if (file.size > maxSize) {
+          return NextResponse.json(
+            { error: `${file.name}: File size must be less than 5MB` },
+            { status: 400 }
+          )
+        }
+
+        // Generate unique filename
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+        const filePath = `products/${fileName}`
+
+        // Convert file to ArrayBuffer
+        const arrayBuffer = await file.arrayBuffer()
+        let fileBuffer = new Uint8Array(arrayBuffer)
+
+        // Compress image if JPEG or PNG
+        if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+          const compressed = await sharp(fileBuffer).jpeg({ quality: 80 }).toBuffer()
+          fileBuffer = new Uint8Array(compressed)
+        } else if (file.type === 'image/png') {
+          const compressed = await sharp(fileBuffer).png({ quality: 80, compressionLevel: 8 }).toBuffer()
+          fileBuffer = new Uint8Array(compressed)
+        }
+        // For GIFs and other formats, skip compression
+
+        // Upload to Supabase Storage
+        const { data, error } = await supabaseAdmin!.storage
+          .from('product-images')
+          .upload(filePath, fileBuffer, {
+            contentType: file.type,
+            upsert: false
+          })
+
+        if (error) {
+          console.error('Upload error:', error)
+          return NextResponse.json(
+            { error: `${file.name}: Upload failed - ${error.message}` },
+            { status: 500 }
+          )
+        }
+
+        // Get public URL
+        const { data: urlData } = supabaseAdmin!.storage
+          .from('product-images')
+          .getPublicUrl(data.path)
+
+        return NextResponse.json({
+          urls: [urlData.publicUrl],
+          message: 'File uploaded successfully'
+        })
+
+      } catch (fileError) {
+        console.error('File processing error:', fileError)
+        return NextResponse.json(
+          { error: `${file.name}: Processing failed` },
+          { status: 500 }
+        )
+      }
+    }
+
+    // For multiple files, process them and return all URLs
     const uploadedUrls: string[] = []
     const errors: string[] = []
 

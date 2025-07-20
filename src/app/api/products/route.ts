@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-
-// Cache for product data
-const cache = new Map<string, { data: any, timestamp: number }>();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-// Helper function to check cache validity
-const isCacheValid = (timestamp: number) => {
-  return Date.now() - timestamp < CACHE_DURATION;
-};
-
-// Helper function to get cache key
-const getCacheKey = (params: URLSearchParams) => {
-  return `products_${params.toString()}`;
-};
+import { 
+  isCacheValid, 
+  getCacheKey, 
+  clearCache, 
+  getCache, 
+  setCache, 
+  getCachedData 
+} from '@/lib/productCache'
 
 // GET /api/products - Get all products with caching and optimization
 export async function GET(request: NextRequest) {
@@ -32,12 +26,13 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '0')
     const limit = parseInt(searchParams.get('limit') || '0')
     const includeRelations = searchParams.get('include_relations') !== 'false' // Default to true
+    const forceRefresh = searchParams.get('refresh') === 'true' // Force refresh parameter
 
-    // Check cache first
+    // Check cache first (unless force refresh is requested)
     const cacheKey = getCacheKey(searchParams);
-    const cachedData = cache.get(cacheKey);
+    const cachedData = getCachedData(cacheKey);
     
-    if (cachedData && isCacheValid(cachedData.timestamp)) {
+    if (!forceRefresh && cachedData && isCacheValid(cachedData.timestamp)) {
       return NextResponse.json(cachedData.data, {
         headers: {
           'Cache-Control': 'public, max-age=300', // 5 minutes
@@ -121,12 +116,10 @@ export async function GET(request: NextRequest) {
     };
 
     // Cache the response
-    cache.set(cacheKey, {
-      data: response,
-      timestamp: Date.now(),
-    });
+    setCache(cacheKey, response);
 
     // Clean up old cache entries periodically
+    const cache = getCache();
     if (cache.size > 100) {
       const now = Date.now();
       for (const [key, value] of cache.entries()) {
@@ -138,7 +131,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response, {
       headers: {
-        'Cache-Control': 'public, max-age=300', // 5 minutes
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // Prevent browser caching
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
 
@@ -267,10 +262,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Clear cache after product creation
-    cache.clear();
+    // Clear cache after creating new product
+    clearCache();
 
-    return NextResponse.json({ product }, { status: 201 })
+    return NextResponse.json({ product })
   } catch (error) {
     console.error('Unexpected error:', error)
     return NextResponse.json(

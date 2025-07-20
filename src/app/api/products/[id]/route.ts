@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { clearCache } from '@/lib/productCache'
 
 // GET /api/products/[id] - Get a single product
 export async function GET(
@@ -231,6 +232,9 @@ export async function PUT(
       }
     }
 
+    // Clear cache after updating product
+    clearCache();
+
     return NextResponse.json({ product })
   } catch (error) {
     console.error('Unexpected error:', error)
@@ -264,6 +268,7 @@ export async function DELETE(
       )
     }
 
+    // Delete the product - CASCADE constraints will handle related records
     const { error } = await supabaseAdmin
       .from('products')
       .delete()
@@ -271,11 +276,26 @@ export async function DELETE(
 
     if (error) {
       console.error('Error deleting product:', error)
+      
+      // Check if it's a foreign key constraint error
+      if (error.code === '23503') {
+        return NextResponse.json(
+          { 
+            error: 'Cannot delete product - it is referenced by orders. Please delete related orders first.',
+            details: error.message
+          },
+          { status: 400 }
+        )
+      }
+      
       return NextResponse.json(
         { error: 'Failed to delete product' },
         { status: 500 }
       )
     }
+
+    // Clear cache after deleting product
+    clearCache();
 
     return NextResponse.json({ message: 'Product deleted successfully' })
   } catch (error) {

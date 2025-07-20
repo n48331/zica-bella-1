@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { IoPencil, IoTrash, IoAdd, IoClose, IoCheckmark } from 'react-icons/io5'
 import ImageUpload from '../common/ImageUpload'
+import { useProducts } from '@/context/ProductContext'
 
 interface Product {
   id: number
@@ -61,6 +62,7 @@ interface ProductFormData {
 }
 
 const ProductManagement: React.FC = () => {
+  const { clearProductCache } = useProducts()
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [colors, setColors] = useState<Color[]>([])
@@ -102,10 +104,19 @@ const ProductManagement: React.FC = () => {
     applyFilters()
   }, [allProducts, filters])
 
-  const fetchData = async () => {
+  const fetchData = async (forceRefresh = false) => {
     try {
+      // Add cache-busting parameter to force fresh data
+      const cacheBuster = forceRefresh ? `&refresh=true&t=${Date.now()}` : '';
+      
       const [productsRes, colorsRes, sizesRes] = await Promise.all([
-        fetch('/api/products'), // Get all products - the API will return all by default
+        fetch(`/api/products${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        }),
         fetch('/api/colors'),
         fetch('/api/sizes')
       ])
@@ -128,7 +139,7 @@ const ProductManagement: React.FC = () => {
       console.error('Error fetching data:', error)
       // Try to fetch with different parameters if first call fails
       try {
-        const fallbackRes = await fetch('/api/products?active=false')
+        const fallbackRes = await fetch(`/api/products?active=false&refresh=true&t=${Date.now()}`)
         const fallbackData = await fallbackRes.json()
         setAllProducts(fallbackData.products || [])
       } catch (fallbackError) {
@@ -220,7 +231,7 @@ const ProductManagement: React.FC = () => {
   }
 
   const handleDelete = async (product: Product) => {
-    if (!confirm(`Are you sure you want to delete "${product.name}"?`)) {
+    if (!confirm(`Are you sure you want to delete "${product.name}"? This will also delete all related order items.`)) {
       return
     }
 
@@ -230,14 +241,22 @@ const ProductManagement: React.FC = () => {
       })
 
       if (response.ok) {
-        setAllProducts(allProducts.filter((p: Product) => p.id !== product.id))
+        // Clear both local cache and ProductContext cache
+        clearProductCache();
+        // Force a fresh fetch to get updated data from server
+        await fetchData(true);
+        alert('Product deleted successfully')
       } else {
         const data = await response.json()
-        alert(`Error: ${data.error}`)
+        if (data.details) {
+          alert(`Error: ${data.error}\n\nDetails: ${data.details}`)
+        } else {
+          alert(`Error: ${data.error}`)
+        }
       }
     } catch (error) {
       console.error('Error deleting product:', error)
-      alert('Failed to delete product')
+      alert('Failed to delete product. Please try again.')
     }
   }
 
@@ -262,7 +281,10 @@ const ProductManagement: React.FC = () => {
       })
 
       if (response.ok) {
-        await fetchData() // Refresh the product list
+        // Clear both local cache and ProductContext cache
+        clearProductCache();
+        // Force a fresh fetch to get updated data from server
+        await fetchData(true);
         resetForm()
       } else {
         const data = await response.json()
@@ -295,7 +317,11 @@ const ProductManagement: React.FC = () => {
   }
 
   const handleImagesChange = (images: string[]) => {
-    setFormData(prev => ({ ...prev, images }))
+    // Ensure we're creating a new array reference to trigger re-renders
+    setFormData(prev => ({ 
+      ...prev, 
+      images: [...images] // Force new array reference
+    }))
   }
 
   if (loading) {

@@ -21,7 +21,7 @@ export default function ContactPage() {
         >
           <h1 className="text-3xl text-white mb-3 tracking-tight">Contact</h1>
           <p className="text-sm text-gray-300 mb-1">
-            Dior Client Service Center is available Monday to Sunday from 11am to 7:30pm (IST).<br />
+            Zica Bella Client Service Center is available Monday to Sunday from 11am to 7:30pm (IST).<br />
             Our Client Advisors will be delighted to assist you and provide personalized advice.
           </p>
         </motion.section>
@@ -50,7 +50,7 @@ export default function ContactPage() {
             </ul>
           </Accordion>
           <Accordion title="Write us">
-            <p className="text-sm text-gray-400">For any inquiries, please use the form on our website or email us at <a href="mailto:contact@dior.com" className="underline text-blue-400">contact@dior.com</a>.</p>
+            <p className="text-sm text-gray-400">For any inquiries, please use the form on our website or email us at <a href="mailto:info@zicabella.com" className="underline text-blue-400">info@zicabella.com</a>.</p>
           </Accordion>
         </motion.section>
 
@@ -91,7 +91,7 @@ export default function ContactPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <h2 className="text-base text-gray-200 mb-3 text-center">Inspire me with all the latest Dior news</h2>
+          <h2 className="text-base text-gray-200 mb-3 text-center">Inspire me with all the latest Zica Bella news</h2>
           <form className="flex flex-col gap-3 items-center">
             <input type="email" className="w-full border border-gray-700 bg-gray-800 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 placeholder-gray-400" placeholder="* E-mail" />
             <button type="submit" className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Confirm</button>

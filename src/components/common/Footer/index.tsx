@@ -11,14 +11,14 @@ const Footer = () => {
             {/* Top Row: Logo/Brand and Social Icons */}
             <div className="flex flex-col md:flex-row items-center justify-between mb-8">
                 <div className="flex items-center space-x-2 mb-4 md:mb-0">
-                    <Image 
+                    {/* <Image 
                         src="/logo-white.png"
                         alt="Logo"
                         width={36}
                         height={36}
                         className="h-9 w-auto"
-                    />
-                    <span className="text-lg font-rocaston font-semibold tracking-wide logo">ZICA BELLA</span>
+                    /> */}
+                    <span className="text-lg font-rocaston font-semibold  logo">ZICA BELLA</span>
                 </div>
                 <div className="flex space-x-4 text-lg">
                     <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FaInstagram /></a>

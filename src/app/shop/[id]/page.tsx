@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import 'swiper/css';
 import 'swiper/css/navigation';
+import ZoomImage from '@/components/common/ZoomImage';
+import ProductImageModal from '@/components/common/ProductImageModal';
 
 const ProductDetailPage = () => {
   const params = useParams();
@@ -22,6 +24,8 @@ const ProductDetailPage = () => {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [modalImageIndex, setModalImageIndex] = useState(0);
 
   useEffect(() => {
     if (params.id) {
@@ -107,10 +111,14 @@ const ProductDetailPage = () => {
               >
                 {product.images.map((image: string, index: number) => (
                   <SwiperSlide key={index}>
-                    <img
+                    <ZoomImage
                       src={image}
                       alt={`${product.name} - Image ${index + 1}`}
                       className="w-full h-full object-cover"
+                      onMobileZoom={() => {
+                        setModalImageIndex(index);
+                        setShowImageModal(true);
+                      }}
                     />
                   </SwiperSlide>
                 ))}
@@ -128,6 +136,14 @@ const ProductDetailPage = () => {
                 </svg>
               </button>
             </div>
+            {/* Mobile Image Modal */}
+            {showImageModal && (
+              <ProductImageModal
+                images={product.images}
+                initialIndex={modalImageIndex}
+                onClose={() => setShowImageModal(false)}
+              />
+            )}
           </div>
 
           {/* Product Details */}

@@ -9,12 +9,19 @@ import { ProfileProvider } from "@/context/ProfileContext";
 import CustomTopLoader from "@/components/common/CustomTopLoader";
 import RouterEvents from "@/components/common/RouterEvents";
 import NextTopLoader from 'nextjs-toploader';
+import { Montserrat } from "next/font/google";
 
 const rocaston = localFont({
   src: "../../public/fonts/Rocaston.ttf",
   variable: "--font-rocaston",
   display: "swap",
   fallback: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
 });
 
 
@@ -39,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-          className={`antialiased ${glacialIndifference.variable} ${rocaston.variable} bg-black`}
+          className={`antialiased ${glacialIndifference.variable} ${rocaston.variable} ${montserrat.variable} bg-black`}
       >
         <NextTopLoader color="#fff" height={3} showSpinner={false} />
         <RouterEvents />

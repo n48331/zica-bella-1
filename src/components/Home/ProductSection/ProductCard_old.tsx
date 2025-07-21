@@ -248,10 +248,10 @@ const ProductCard = ({
             </button>
           {/* Product Info */}
           <div className="mt-4 space-y-1 px-2 text-center">
-            <h3 className="text-sm font-medium text-white uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-white uppercase tracking-wide font-montserrat">
               {product.name}
             </h3>
-            <p className="text-sm text-white font-medium font-poppins">
+            <p className="text-sm text-white font-medium font-montserrat">
                               ₹{product.price.toLocaleString()}
             </p>
           </div>

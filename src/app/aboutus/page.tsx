@@ -273,7 +273,7 @@ const AboutPage = () => {
               Shop Collection
             </Link>
             <Link 
-              href="/contact" 
+              href="/contactus" 
               className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wide hover:bg-white hover:text-black transition-colors"
             >
               Get In Touch

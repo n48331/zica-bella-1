@@ -9,7 +9,7 @@ interface Product {
   description: string | null
   price: number
   images: string[]
-  category: string
+  categories: string[] // changed from category: string
   stock_quantity: number
   sku: string | null
   is_featured: boolean
@@ -52,7 +52,7 @@ interface ProductFormData {
   description: string
   price: string
   images: string[]
-  category: string
+  categories: string[] // changed from category: string
   selectedColors: number[]
   selectedSizes: number[]
   stock_quantity: string
@@ -75,7 +75,7 @@ const ProductManagement: React.FC = () => {
     description: '',
     price: '',
     images: [],
-    category: '',
+    categories: [],
     selectedColors: [],
     selectedSizes: [],
     stock_quantity: '0',
@@ -94,10 +94,11 @@ const ProductManagement: React.FC = () => {
     stock: 'all' // all, in-stock, low-stock, out-of-stock
   })
 
-  const categories = ['men', 'women', 'kids', 'accessories']
+  const [categories, setCategories] = useState<string[]>([])
 
   useEffect(() => {
     fetchData()
+    fetchCategories()
   }, [])
 
   useEffect(() => {
@@ -150,6 +151,18 @@ const ProductManagement: React.FC = () => {
     }
   }
 
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/categories')
+      const data = await res.json()
+      if (data.categories && Array.isArray(data.categories)) {
+        setCategories(data.categories.map((cat: any) => cat.name))
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories', err)
+    }
+  }
+
   const applyFilters = () => {
     let filtered = [...allProducts]
 
@@ -165,7 +178,7 @@ const ProductManagement: React.FC = () => {
 
     // Category filter
     if (filters.category) {
-      filtered = filtered.filter(product => product.category === filters.category)
+      filtered = filtered.filter(product => product.categories && product.categories.includes(filters.category))
     }
 
     // Status filter
@@ -200,7 +213,7 @@ const ProductManagement: React.FC = () => {
       description: '',
       price: '',
       images: [],
-      category: '',
+      categories: [],
       selectedColors: [],
       selectedSizes: [],
       stock_quantity: '0',
@@ -219,7 +232,7 @@ const ProductManagement: React.FC = () => {
       description: product.description || '',
       price: product.price.toString(),
       images: product.images || [],
-      category: product.category,
+      categories: product.categories || [],
       selectedColors: product.product_colors?.map(pc => pc.color_id) || [],
       selectedSizes: product.product_sizes?.map(ps => ps.size_id) || [],
       stock_quantity: product.stock_quantity.toString(),
@@ -313,6 +326,15 @@ const ProductManagement: React.FC = () => {
       selectedSizes: prev.selectedSizes.includes(sizeId)
         ? prev.selectedSizes.filter(id => id !== sizeId)
         : [...prev.selectedSizes, sizeId]
+    }))
+  }
+
+  const handleCategoryToggle = (cat: string) => {
+    setFormData(prev => ({
+      ...prev,
+      categories: prev.categories.includes(cat)
+        ? prev.categories.filter(c => c !== cat)
+        : [...prev.categories, cat]
     }))
   }
 
@@ -473,20 +495,22 @@ const ProductManagement: React.FC = () => {
                   />
                 </div>
 
-                {/* Category */}
+                {/* Category (multi-select) */}
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-white">Category *</label>
-                  <select
-                    required
-                    value={formData.category}
-                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                    className="w-full p-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="">Select category</option>
+                  <label className="block text-sm font-medium mb-1 text-white">Categories *</label>
+                  <div className="flex flex-wrap gap-2">
                     {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
+                      <label key={cat} className="flex items-center gap-1 text-white">
+                        <input
+                          type="checkbox"
+                          checked={formData.categories.includes(cat)}
+                          onChange={() => handleCategoryToggle(cat)}
+                          className="accent-blue-500"
+                        />
+                        <span className="capitalize">{cat}</span>
+                      </label>
                     ))}
-                  </select>
+                  </div>
                 </div>
 
                 {/* Price */}
@@ -686,7 +710,11 @@ const ProductManagement: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="capitalize text-sm text-white">{product.category}</span>
+                  <span className="capitalize text-sm text-white">
+                    {(product.categories && Array.isArray(product.categories))
+                      ? product.categories.join(', ')
+                      : ''}
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                   ₹{product.price.toLocaleString()}

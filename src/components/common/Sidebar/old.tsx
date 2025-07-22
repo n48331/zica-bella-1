@@ -130,7 +130,7 @@ const Sidebar: React.FC<{isScrolled:boolean}> = ({isScrolled}) => {
                   </li>
                   <li>
                     <Link
-                      href="/contact"
+                      href="/contactus"
                       className="text-gray-800 hover:text-blue-600 text-lg"
                       onClick={toggleSidebar}
                     >

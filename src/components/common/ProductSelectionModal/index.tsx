@@ -63,16 +63,18 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
         className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm"
         onClick={onClose}
       />
-      
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Modal - Full Width Bottom Sheet with Slide Up Animation */}
+      <div className="fixed inset-0 z-50 flex items-end justify-center p-0 pointer-events-none">
         <div
-          className="bg-white/20 rounded-sm max-w-md w-full max-h-[90vh] overflow-y-auto shadow-xl border border-white/30 backdrop-blur-lg"
+          className={`w-full bg-white/20 rounded-t-2xl shadow-2xl border-t border-white/30 backdrop-blur-lg transition-transform duration-500 ease-out pointer-events-auto
+            ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}
+            animate-[slideUpBounce_0.5s_ease-out] max-h-[90vh] overflow-y-auto
+          `}
           style={{
             boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)",
             backdropFilter: "blur(16px) saturate(180%)",
             WebkitBackdropFilter: "blur(16px) saturate(180%)",
-            border: "1px solid rgba(255,255,255,0.3)",
+            borderTop: "1px solid rgba(255,255,255,0.3)",
           }}
         >
           {/* Header */}
@@ -85,7 +87,6 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
               <IoClose className="text-xl text-white" />
             </button>
           </div>
-
           {/* Content */}
           <div className="p-4">
             {/* Product Info */}
@@ -102,7 +103,6 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                 <p className="text-lg font-semibold text-white">₹{product.price.toLocaleString()}</p>
               </div>
             </div>
-
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
               <div className="mb-6 hidden">
@@ -127,7 +127,6 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                 </div>
               </div>
             )}
-
             {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="mb-6">
@@ -150,7 +149,6 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                 </div>
               </div>
             )}
-
             {/* Quantity Selection */}
             <div className="mb-6 hidden">
              {selectedColor && (
@@ -170,20 +168,12 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                   +
                 </button>
               </div></>
-              
              )}
             </div>
           </div>
-
           {/* Footer */}
           <div className="border-t border-white/30 p-4">
             <div className="flex gap-3">
-              {/* <button
-                onClick={onClose}
-                className="flex-1 py-2 border border-gray-300 text-white rounded-md hover:bg-gray-50 transition"
-              >
-                Cancel
-              </button> */}
               <button
                 onClick={handleAddToCart}
                 disabled={product.soldOut}

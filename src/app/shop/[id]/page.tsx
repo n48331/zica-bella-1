@@ -109,7 +109,7 @@ const ProductDetailPage = () => {
                 modules={[Navigation]}
                 className="h-full"
               >
-                {product.images.map((image: string, index: number) => (
+                {(product.images || []).map((image: string, index: number) => (
                   <SwiperSlide key={index}>
                     <ZoomImage
                       src={image}
@@ -194,7 +194,7 @@ const ProductDetailPage = () => {
                   <img src="/shop/icons/shirts.png" alt="Shirt Icon" className="w-10 h-10" />
                 </div>
                 <div className="flex-1 flex space-x-3">
-                  {product.colors.map((color: any) => (
+                  {(product.colors || []).map((color: any) => (
                     <button
                       key={color.name}
                       onClick={() => color.available && setSelectedColor(color.name)}
@@ -222,7 +222,7 @@ const ProductDetailPage = () => {
                   <img src="/shop/icons/shirts.png" alt="Shirt Icon" className="w-10 h-10" />
                 </div> */}
                 <div className="flex-1 flex space-x-3">
-                  {product.sizes.map((size: any) => (
+                  {(product.sizes || []).map((size: any) => (
                     <button
                       key={size.name}
                       onClick={() => size.available && setSelectedSize(size.name)}

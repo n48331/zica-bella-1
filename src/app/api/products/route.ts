@@ -9,7 +9,7 @@ import {
   getCachedData 
 } from '@/lib/productCache'
 
-// GET /api/products - Get all products with caching and optimization
+// GET /api/products - Get all products with categories as array
 export async function GET(request: NextRequest) {
   try {
     if (!supabaseAdmin) {
@@ -28,76 +28,23 @@ export async function GET(request: NextRequest) {
     const includeRelations = searchParams.get('include_relations') !== 'false' // Default to true
     const forceRefresh = searchParams.get('refresh') === 'true' // Force refresh parameter
 
-    // Check cache first (unless force refresh is requested)
-    const cacheKey = getCacheKey(searchParams);
-    const cachedData = getCachedData(cacheKey);
-    
-    if (!forceRefresh && cachedData && isCacheValid(cachedData.timestamp)) {
-      return NextResponse.json(cachedData.data, {
-        headers: {
-          'Cache-Control': 'public, max-age=300', // 5 minutes
-        }
-      });
-    }
-
-    // Build the query with optimizations
-    const selectClause = includeRelations ? `
-      *,
-      product_colors:product_colors(
-        id,
-        color_id,
-        available,
-        colors:color_id(
-          id,
-          name,
-          value
-        )
-      ),
-      product_sizes:product_sizes(
-        id,
-        size_id,
-        available,
-        sizes:size_id(
-          id,
-          name,
-          display_order
-        )
-      )
-    ` : `
-      id,
-      name,
-      price,
-      images,
-      category,
-      stock_quantity,
-      is_featured,
-      is_active,
-      created_at,
-      updated_at
-    `;
-
+    // Build the query for products
     let query = supabaseAdmin
       .from('products')
-      .select(selectClause)
+      .select(`*, product_colors:product_colors(id, color_id, available, colors:color_id(id, name, value)), product_sizes:product_sizes(id, size_id, available, sizes:size_id(id, name, display_order))`)
       .eq('is_active', active)
       .order('created_at', { ascending: false });
-    
     if (category) {
-      query = query.eq('category', category);
+      query = query.eq('deprecated_category', category);
     }
-
     if (featured === 'true') {
       query = query.eq('is_featured', true);
     }
-
-    // Apply pagination if specified
     if (limit > 0) {
       const offset = page * limit;
       query = query.range(offset, offset + limit - 1);
     }
-
-    const { data: products, error, count } = await query;
-
+    const { data: products, error } = await query;
     if (error) {
       console.error('Error fetching products:', error);
       return NextResponse.json(
@@ -105,38 +52,49 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    // Prepare response
-    const response = {
-      products: products || [],
-      totalCount: count,
-      page,
-      limit,
-      hasMore: limit > 0 ? (products?.length === limit) : false,
-    };
-
-    // Cache the response
-    setCache(cacheKey, response);
-
-    // Clean up old cache entries periodically
-    const cache = getCache();
-    if (cache.size > 100) {
-      const now = Date.now();
-      for (const [key, value] of cache.entries()) {
-        if (!isCacheValid(value.timestamp)) {
-          cache.delete(key);
+    // For each product, fetch categories
+    const productIds = (products || []).map((p: any) => p.id);
+    let categoriesMap: Record<number, string[]> = {};
+    if (productIds.length > 0) {
+      const { data: pcRows, error: pcErr } = await supabaseAdmin
+        .from('product_categories')
+        .select('product_id, category_id, categories!inner(name)')
+        .in('product_id', productIds);
+      if (!pcErr && pcRows) {
+        for (const row of pcRows) {
+          if (!categoriesMap[row.product_id]) categoriesMap[row.product_id] = [];
+          if (row.categories) {
+            if (Array.isArray(row.categories)) {
+              for (const cat of row.categories as any[]) {
+                if (cat && cat.name) categoriesMap[row.product_id].push(cat.name);
+              }
+            } else if ((row.categories as any).name) {
+              categoriesMap[row.product_id].push((row.categories as any).name);
+            }
+          }
         }
       }
     }
-
+    // Attach categories array to each product
+    const productsWithCategories = (products || []).map((p: any) => ({
+      ...p,
+      categories: categoriesMap[p.id] || (p.deprecated_category ? [p.deprecated_category] : [])
+    }));
+    // Prepare response
+    const response = {
+      products: productsWithCategories,
+      totalCount: productsWithCategories.length,
+      page,
+      limit,
+      hasMore: limit > 0 ? (productsWithCategories.length === limit) : false,
+    };
     return NextResponse.json(response, {
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate', // Prevent browser caching
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
       }
     });
-
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json(
@@ -163,7 +121,7 @@ export async function POST(request: NextRequest) {
       description,
       price,
       images = [],
-      category,
+      categories = [], // now array
       selectedColors = [],
       selectedSizes = [],
       stock_quantity = 0,
@@ -173,9 +131,9 @@ export async function POST(request: NextRequest) {
     } = body
 
     // Validation
-    if (!name || !price || !category) {
+    if (!name || !price || !categories || !Array.isArray(categories) || categories.length === 0) {
       return NextResponse.json(
-        { error: 'Name, price, and category are required' },
+        { error: 'Name, price, and at least one category are required' },
         { status: 400 }
       )
     }
@@ -203,6 +161,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Insert product (deprecated_category for backward compatibility)
     const { data: product, error } = await supabaseAdmin
       .from('products')
       .insert({
@@ -210,7 +169,7 @@ export async function POST(request: NextRequest) {
         description,
         price: parseFloat(price),
         images,
-        category,
+        deprecated_category: categories[0], // for legacy support
         stock_quantity: parseInt(stock_quantity),
         sku: sku && sku.trim() !== '' ? sku.trim() : null, // Set to null if empty
         is_featured,
@@ -227,36 +186,54 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Handle colors and sizes relationships
-    // Insert product-color relationships
+    // Insert product-category relationships
+    if (categories && categories.length > 0) {
+      // Get category IDs for the given names
+      const { data: categoryRows, error: catErr } = await supabaseAdmin
+        .from('categories')
+        .select('id, name')
+        .in('name', categories)
+      if (catErr) {
+        console.error('Error fetching categories:', catErr)
+      } else {
+        const categoryInserts = (categoryRows || []).map((cat: any) => ({
+          product_id: product.id,
+          category_id: cat.id
+        }))
+        if (categoryInserts.length > 0) {
+          const { error: pcErr } = await supabaseAdmin
+            .from('product_categories')
+            .insert(categoryInserts)
+          if (pcErr) {
+            console.error('Error inserting product_categories:', pcErr)
+          }
+        }
+      }
+    }
+
+    // Handle colors and sizes relationships (unchanged)
     if (selectedColors && selectedColors.length > 0) {
       const colorInserts = selectedColors.map((colorId: number) => ({
         product_id: product.id,
         color_id: colorId,
         available: true
       }))
-
       const { error: colorError } = await supabaseAdmin
         .from('product_colors')
         .insert(colorInserts)
-
       if (colorError) {
         console.error('Error inserting product colors:', colorError)
       }
     }
-
-    // Insert product-size relationships
     if (selectedSizes && selectedSizes.length > 0) {
       const sizeInserts = selectedSizes.map((sizeId: number) => ({
         product_id: product.id,
         size_id: sizeId,
         available: true
       }))
-
       const { error: sizeError } = await supabaseAdmin
         .from('product_sizes')
         .insert(sizeInserts)
-
       if (sizeError) {
         console.error('Error inserting product sizes:', sizeError)
       }

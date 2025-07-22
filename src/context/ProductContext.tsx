@@ -175,18 +175,15 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
           const rawProducts = data.products;
           const processedProducts = rawProducts.map(processProduct);
           
-          // Extract unique categories
-          const uniqueCategories = Array.from(new Set(processedProducts.map((p: Product) => p.category))) as string[];
-          
-
-          
+          // Extract unique categories (flatten all product categories arrays, filter out undefined/null, deduplicate)
+          const allCategories = processedProducts.flatMap((p: any) => Array.isArray(p.categories) ? p.categories : [p.categories]).filter(Boolean) as string[];
+          const uniqueCategories = Array.from(new Set(allCategories)) as string[];
           // Update cache
           productCache = {
             data: rawProducts,
             timestamp: Date.now(),
             categories: uniqueCategories
           };
-          
           // Update state
           setProducts(processedProducts);
           setCategories(uniqueCategories);
@@ -253,26 +250,16 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     if (category === 'VIEW ALL') {
       return products;
     }
-    
-    // Try exact match first
-    let filtered = products.filter(product => product.category === category);
-    
-    // If no exact match, try case-insensitive match
-    if (filtered.length === 0) {
-      filtered = products.filter(product => 
-        product.category.toLowerCase() === category.toLowerCase()
-      );
-    }
-    
-    // If still no match, try partial match
-    if (filtered.length === 0) {
-      filtered = products.filter(product => 
-        product.category.toLowerCase().includes(category.toLowerCase()) ||
-        category.toLowerCase().includes(product.category.toLowerCase())
-      );
-    }
-    
-    return filtered;
+    // Support multi-category (array) and legacy single category (string)
+    return products.filter(product => {
+      const categoriesArr = (product as any).categories;
+      if (Array.isArray(categoriesArr)) {
+        return categoriesArr.some((c: string) => typeof c === 'string' && c.toLowerCase() === category.toLowerCase());
+      } else if (typeof product.category === 'string') {
+        return product.category.toLowerCase() === category.toLowerCase();
+      }
+      return false;
+    });
   }, [products, categories]);
 
   // Optimized product lookup

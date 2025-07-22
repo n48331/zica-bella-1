@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-montserrat: var(--font-montserrat);
+}
+
+body {
+  font-family: var(--font-poppins), 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Logo text uses Rocaston font, everything else uses Glacial Indifference */
+.logo {
+  font-family: var(--font-rocaston), 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@theme {
+  --font-rocaston: var(--font-rocaston);
+  --font-montserrat: var(--font-montserrat);
+}
+
+/* globals.css or inside a module.css file if you're using CSS modules */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+@keyframes intentionalZoom {
+  0% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.animate-intentionalZoom {
+  animation: intentionalZoom 1s ease-out forwards;
+  background: rgba(0, 0, 0, 0); /* transparent to not affect image */
+  transform-origin: center center;
+  z-index: 10;
+}
+
+.handdrawn-wobbly-border {
+  background-image: url("/loop.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  position: relative;
+  border: none !important;
+}

@@ -60,13 +60,25 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
     <>
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm "
         onClick={onClose}
       />
       {/* Modal - Full Width Bottom Sheet with Slide Up Animation */}
       <div className="fixed inset-0 z-50 flex items-end justify-center p-0 pointer-events-none">
-        <div
+        {/* <div
           className={`w-full bg-white/20 rounded-t-2xl shadow-2xl border-t border-white/30 backdrop-blur-lg transition-transform duration-500 ease-out pointer-events-auto
+            ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}
+            animate-[slideUpBounce_0.5s_ease-out] max-h-[90vh] overflow-y-auto
+          `}
+          style={{
+            boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)",
+            backdropFilter: "blur(16px) saturate(180%)",
+            WebkitBackdropFilter: "blur(16px) saturate(180%)",
+            borderTop: "1px solid rgba(255,255,255,0.3)",
+          }}
+        > */}
+           <div
+          className={`w-full bg-black rounded-t-2xl shadow-2xl border-t border-white/30 backdrop-blur-lg transition-transform duration-500 ease-out pointer-events-auto
             ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}
             animate-[slideUpBounce_0.5s_ease-out] max-h-[90vh] overflow-y-auto
           `}
@@ -88,19 +100,19 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
             </button>
           </div>
           {/* Content */}
-          <div className="p-4">
+          <div className="p-4 h-full">
             {/* Product Info */}
-            <div className="flex gap-4 mb-6">
-              <div className="w-20 h-20 flex-shrink-0">
+            <div className="flex gap-4 mb-6 items-center flex-col">
+              <div className="w-full h-[40vh] ">
                 <img 
                   src={product.images[0]} 
                   alt={product.name}
-                  className="w-full h-full object-cover rounded-sm"
+                  className="w-full h-full object-cover rounded-sm aspect-auto"
                 />
               </div>
               <div>
-                <h3 className="font-medium text-lg text-white">{product.name}</h3>
-                <p className="text-lg font-semibold text-white">₹{product.price.toLocaleString()}</p>
+                <h3 className="font-medium text-lg text-white text-center">{product.name}</h3>
+                <p className="text-lg font-semibold text-white text-center">₹{product.price.toLocaleString()}</p>
               </div>
             </div>
             {/* Color Selection */}
@@ -137,10 +149,10 @@ const ProductSelectionModal: React.FC<ProductSelectionModalProps> = ({
                       key={size.name}
                       onClick={() => size.available && setSelectedSize(size.name)}
                       disabled={!size.available}
-                      className={`px-4 py-2 border rounded-sm text-sm font-medium transition-all duration-200 ${
+                      className={`px-4 py-2  rounded-sm text-sm font-medium transition-all duration-200 ${
                         selectedSize === size.name
-                          ? 'border-black bg-black text-white'
-                          : 'border-gray-300 text-white hover:border-gray-400'
+                          ? 'handdrawn-wobbly-border'
+                          : ''
                       } ${!size.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       {size.name}

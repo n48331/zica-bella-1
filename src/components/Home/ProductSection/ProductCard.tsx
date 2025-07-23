@@ -7,6 +7,8 @@ import { useProducts, Product as ProductType } from "@/context/ProductContext";
 import ProductSelectionModal from "@/components/common/ProductSelectionModal";
 import "swiper/css";
 import "swiper/css/pagination";
+import { BiCartAdd } from "react-icons/bi";
+import { IoAdd } from "react-icons/io5";
 
 interface Product {
   id: number;
@@ -136,7 +138,10 @@ const ProductCard = ({
           }}
           ref={containerRef}
         >
-          <Link href={`/shop/${product.id}`} className="relative h-80 aspect-[3/4] w-full overflow-hidden bg-gray-900">
+          <div className="relative h-80 md:h-96 aspect-[3/4] w-full overflow-hidden bg-gray-900">
+
+          
+          <Link href={`/shop/${product.id}`} className="">
             {/* Always show the first image */}
             <img
               src={product.images[0]}
@@ -229,13 +234,14 @@ const ProductCard = ({
    <button 
               onClick={handleAddToCart}
               disabled={product.soldOut}
-              className={`absolute bottom-[85px] right-3 flex h-8 w-8 items-center justify-center rounded-full shadow-md transition-colors duration-200 z-20 ${
+              className={`absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center  transition-all duration-200 z-20 ${
                 product.soldOut 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-white hover:bg-gray-50 hover:scale-110'
+                  ? 'bg-gray-400 cursor-not-allowed opacity-50'
+                  : 'bg-white/30 backdrop-blur-md border border-white/30 hover:bg-white/50 hover:scale-110'
               }`}
             >
-              <svg
+              <IoAdd className="text-black" size={20}/>
+              {/* <svg
                 className="h-4 w-4 text-black"
                 fill="none"
                 stroke="currentColor"
@@ -247,8 +253,8 @@ const ProductCard = ({
                   strokeWidth={2}
                   d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                 />
-              </svg>
-            </button>
+              </svg> */}
+            </button></div>
           {/* Product Info */}
           <div className="mt-4 space-y-1 px-2 text-center">
             <h3 className="text-xs font-medium text-white uppercase tracking-wide font-montserrat">

@@ -128,7 +128,7 @@ const ProductCard = ({
 
   return (
     <>
-      <Link href={`/shop/${product.id}`} className="block">
+      <div className="block">
         <div
           className={`group relative bg-black overflow-hidden pb-4 cursor-pointer ${index % 2 == 0 ? "md:border-l-2 md:border-black" : ""}`}
           style={{
@@ -136,7 +136,7 @@ const ProductCard = ({
           }}
           ref={containerRef}
         >
-          <div className="relative h-80 aspect-[3/4] w-full overflow-hidden bg-gray-900">
+          <Link href={`/shop/${product.id}`} className="relative h-80 aspect-[3/4] w-full overflow-hidden bg-gray-900">
             {/* Always show the first image */}
             <img
               src={product.images[0]}
@@ -152,6 +152,28 @@ const ProductCard = ({
                 className="h-full w-full object-cover object-center absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none"
                 loading="lazy"
                 draggable={false}
+            
+              onMouseEnter={() => {
+                // Desktop hover: show last image
+                const img = containerRef.current?.querySelector('.hover-img') as HTMLImageElement;
+                if (img) img.style.opacity = "1";
+              }}
+              onMouseLeave={() => {
+                // Desktop hover out: hide last image
+                const img = containerRef.current?.querySelector('.hover-img') as HTMLImageElement;
+                if (img) img.style.opacity = "0";
+              }}
+              onTouchStart={() => {
+                // Mobile tap: show last image
+                const img = containerRef.current?.querySelector('.hover-img') as HTMLImageElement;
+                if (img) img.style.opacity = "1";
+              }}
+              onTouchEnd={() => {
+                // Mobile tap end: hide last image after short delay
+                const img = containerRef.current?.querySelector('.hover-img') as HTMLImageElement;
+                if (img) setTimeout(() => { img.style.opacity = "0"; }, 200);
+              }}
+              // Add a class for targeting
               />
             )}
             {/* Sold Out Badge */}
@@ -202,7 +224,7 @@ const ProductCard = ({
                 background: #111 !important;
               }
             `}</style>
-          </div>
+          </Link>
    {/* Add to Cart Button */}
    <button 
               onClick={handleAddToCart}
@@ -237,7 +259,7 @@ const ProductCard = ({
             </p>
           </div>
         </div>
-      </Link>
+      </div>
       
       {/* Product Selection Modal */}
       <ProductSelectionModal

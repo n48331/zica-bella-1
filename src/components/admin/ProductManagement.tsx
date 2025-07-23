@@ -107,11 +107,11 @@ const ProductManagement: React.FC = () => {
 
   const fetchData = async (forceRefresh = false) => {
     try {
-      // Add cache-busting parameter to force fresh data
-      const cacheBuster = forceRefresh ? `&refresh=true&t=${Date.now()}` : '';
-      
+      // Use ? if no query params, & if there are
+      const baseUrl = '/api/products';
+      const productsUrl = forceRefresh ? `${baseUrl}?refresh=true&t=${Date.now()}` : baseUrl;
       const [productsRes, colorsRes, sizesRes] = await Promise.all([
-        fetch(`/api/products${cacheBuster}`, {
+        fetch(productsUrl, {
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
@@ -120,7 +120,7 @@ const ProductManagement: React.FC = () => {
         }),
         fetch('/api/colors'),
         fetch('/api/sizes')
-      ])
+      ]);
 
       if (!productsRes.ok) {
         throw new Error(`Products API error: ${productsRes.status}`)

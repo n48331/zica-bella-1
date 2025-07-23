@@ -11,8 +11,10 @@ import {
 
 // GET /api/products - Get all products with categories as array
 export async function GET(request: NextRequest) {
+  console.log('[API] GET /api/products called:', request.url);
   try {
     if (!supabaseAdmin) {
+      console.error('[API] supabaseAdmin not configured');
       return NextResponse.json(
         { error: 'Service role not configured' },
         { status: 500 }
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest) {
     }
     const { data: products, error } = await query;
     if (error) {
-      console.error('Error fetching products:', error);
+      console.error('[API] Error fetching products:', error);
       return NextResponse.json(
         { error: 'Failed to fetch products' },
         { status: 500 }
@@ -96,7 +98,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('[API] Unexpected error in GET /api/products:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -106,8 +108,10 @@ export async function GET(request: NextRequest) {
 
 // POST /api/products - Create a new product
 export async function POST(request: NextRequest) {
+  console.log('[API] POST /api/products called');
   try {
     if (!supabaseAdmin) {
+      console.error('[API] supabaseAdmin not configured');
       return NextResponse.json(
         { error: 'Service role not configured' },
         { status: 500 }
@@ -179,7 +183,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error creating product:', error)
+      console.error('[API] Error creating product:', error)
       return NextResponse.json(
         { error: 'Failed to create product' },
         { status: 500 }
@@ -244,7 +248,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ product })
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('[API] Unexpected error in POST /api/products:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

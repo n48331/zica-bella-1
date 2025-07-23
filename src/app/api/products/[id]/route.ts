@@ -232,6 +232,40 @@ export async function PUT(
       }
     }
 
+    // Handle category relationships if provided
+    if (body.categories !== undefined) {
+      // Delete existing category relationships
+      await supabaseAdmin
+        .from('product_categories')
+        .delete()
+        .eq('product_id', id);
+
+      // Insert new category relationships
+      if (Array.isArray(body.categories) && body.categories.length > 0) {
+        // Get category IDs for the given names
+        const { data: categoryRows, error: catErr } = await supabaseAdmin
+          .from('categories')
+          .select('id, name')
+          .in('name', body.categories);
+        if (catErr) {
+          console.error('Error fetching categories for update:', catErr);
+        } else {
+          const categoryInserts = (categoryRows || []).map((cat: any) => ({
+            product_id: id,
+            category_id: cat.id
+          }));
+          if (categoryInserts.length > 0) {
+            const { error: pcErr } = await supabaseAdmin
+              .from('product_categories')
+              .insert(categoryInserts);
+            if (pcErr) {
+              console.error('Error updating product_categories:', pcErr);
+            }
+          }
+        }
+      }
+    }
+
     // Clear cache after updating product
     clearCache();
 
